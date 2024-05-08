@@ -1,32 +1,32 @@
 [
   {
-    "userId": "amit",
+    "customerId": "1",
     "amount": 10000,
-    "term": 12,
+    "terms": 12,
     "termFrequency": "WEEKLY"
   },
   {
-    "userId": "amit",
+    "customerId": "1",
     "amount": 1000,
-    "term": 4,
+    "terms": 4,
     "termFrequency": "WEEKLY"
   },
   {
-    "userId": "priyank",
+    "customerId": "2",
     "amount": 1800,
-    "term": 8,
+    "terms": 8,
     "termFrequency": "WEEKLY"
   },
   {
-    "userId": "lalit",
+    "customerId": "3",
     "amount": 1900,
-    "term": 5,
+    "terms": 5,
     "termFrequency": "WEEKLY"
   },
   {
-    "userId": "sumit",
+    "customerId": "4",
     "amount": 3000,
-    "term": 14,
+    "terms": 14,
     "termFrequency": "WEEKLY"
   }
 ]

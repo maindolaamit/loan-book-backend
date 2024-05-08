@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping("/loan/application/")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create Loan Request", description = "API to create a loan request.")
+    @Operation(summary = "Submit Loan Application Request", description = "API to submit a loan application request.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully created",
                     content = @Content(mediaType = "application/json")),
@@ -41,13 +41,13 @@ public class UserController {
                                                         @PathVariable("user-id") @NotNull String userId,
                                                         @NotNull @RequestBody LoanApplicationRequest request) {
         log.info("Received loan request for user: {}", userId);
-        String loanRequestId = service.createLoanRequest(userId, request);
-        return new ResponseEntity<>(loanRequestId, HttpStatus.CREATED);
+        LoanApplication application = service.newLoanApplication(userId, request);
+        return new ResponseEntity<>(application.applicationId(), HttpStatus.CREATED);
     }
 
     @GetMapping("/loan/application/all")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get all Loan Applications", description = "API to get all loan applications.")
+    @Operation(summary = "Get all Loan Applications", description = "API to get all loan applications for a user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved",
                     content = @Content(mediaType = "application/json")),
@@ -64,7 +64,7 @@ public class UserController {
 
     @GetMapping("/loan/application/active")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get all Active Loan Applications", description = "API to get all active loan applications.")
+    @Operation(summary = "Get all Active Loan Applications", description = "API to get all active loan applications for a user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved",
                     content = @Content(mediaType = "application/json")),
@@ -72,15 +72,16 @@ public class UserController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllActiveLoanApplicationsForUser(@Valid
-                                                                               @PathVariable("user-id")
-                                                                               @NotBlank @NotNull String userId
+                                                                                     @PathVariable("user-id")
+                                                                                     @NotBlank @NotNull String userId
     ) {
         var allApplications = service.getLoanApplicationsForUser(userId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
+
     @GetMapping("/loan/application/inactive")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get all Inactive Loan Applications", description = "API to get all loan applications.")
+    @Operation(summary = "Get all Inactive Loan Applications", description = "API to get all inactive loan applications for a user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved",
                     content = @Content(mediaType = "application/json")),
@@ -88,16 +89,16 @@ public class UserController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllInactiveLoanApplicationsForUser(@Valid
-                                                                               @PathVariable("user-id")
-                                                                               @NotBlank @NotNull String userId
+                                                                                       @PathVariable("user-id")
+                                                                                       @NotBlank @NotNull String userId
     ) {
         var allApplications = service.getLoanApplicationsForUser(userId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
 
-    @PutMapping("/{loan-id}/repay/")
+    @PutMapping("/loan/{loan-id}/repay/")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(summary = "Create Loan Request", description = "API to create a loan request.")
+    @Operation(summary = "Repay Loan Amount", description = "API to repay a loan amount.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Successfully updated",
                     content = @Content(mediaType = "application/json")),

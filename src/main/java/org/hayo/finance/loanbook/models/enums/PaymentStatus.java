@@ -2,13 +2,12 @@ package org.hayo.finance.loanbook.models.enums;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.hayo.finance.loanbook.utils.EnumUtility;
 
 @AllArgsConstructor
 @Getter
 public enum PaymentStatus implements ValueEnum {
-    DRAFT("Draft"),
-    PENDING("Published"),
-    APPROVED("Approved"),
+    PENDING("Pending"),
     PAID("Paid");
 
     private final String value;
@@ -20,14 +19,5 @@ public enum PaymentStatus implements ValueEnum {
             }
         }
         throw new IllegalArgumentException("Invalid Application Status : " + value);
-    }
-
-    private static String getInvalidValueErrorMessage(String value) {
-        StringBuilder sb = new StringBuilder("Invalid PageTypes optionValue: ");
-        sb.append(value).append(". Valid values are: ");
-        for (PaymentFrequency paymentFrequency : PaymentFrequency.values()) {
-            sb.append(paymentFrequency.getValue()).append(", ");
-        }
-        return sb.toString();
     }
 }

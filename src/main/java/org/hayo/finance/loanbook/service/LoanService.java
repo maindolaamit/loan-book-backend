@@ -6,7 +6,7 @@ import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
 import java.util.List;
 
 public interface LoanService {
-    String createLoanRequest(String admin, LoanApplicationRequest request);
+    LoanApplication newLoanApplication(String userId, LoanApplicationRequest request);
 
     List<LoanApplication> getLoanApplicationsForUser(String userId);
 
