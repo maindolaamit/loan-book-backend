@@ -1,0 +1,32 @@
+[
+  {
+    "userId": "amit",
+    "amount": 10000,
+    "term": 12,
+    "termFrequency": "WEEKLY"
+  },
+  {
+    "userId": "amit",
+    "amount": 1000,
+    "term": 4,
+    "termFrequency": "WEEKLY"
+  },
+  {
+    "userId": "priyank",
+    "amount": 1800,
+    "term": 8,
+    "termFrequency": "WEEKLY"
+  },
+  {
+    "userId": "lalit",
+    "amount": 1900,
+    "term": 5,
+    "termFrequency": "WEEKLY"
+  },
+  {
+    "userId": "sumit",
+    "amount": 3000,
+    "term": 14,
+    "termFrequency": "WEEKLY"
+  }
+]

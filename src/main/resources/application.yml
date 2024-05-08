@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: loan-book
+
+server:
+  servlet:
+    context-path: /api
+
+
+
