@@ -50,6 +50,7 @@ class LoanApplicationRepositoryTest {
     private LoanApplicationRepository repository;
 
     @Test
+    @DisplayName("Test connection")
     void testConnection() {
         assertThat(postgres.isCreated());
         assertThat(postgres.isRunning());

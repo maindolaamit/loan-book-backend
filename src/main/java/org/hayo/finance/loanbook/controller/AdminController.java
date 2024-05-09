@@ -28,6 +28,24 @@ public class AdminController {
 
     private final AdminService service;
 
+    @GetMapping("/loan/application/")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get all Loan Applications", description = "API to get all loan applications for a user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<List<LoanApplication>> getAllLoanApplications(@Valid
+                                                                        @PathVariable("admin-id")
+                                                                        @NotBlank @NotNull String userId
+    ) {
+        log.info("Getting all loan applications for admin: {}", userId);
+        var allApplications = service.getAllLoanApplications(userId);
+        return new ResponseEntity<>(allApplications, HttpStatus.OK);
+    }
+
     @GetMapping("/loan/application/pending")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all Active Loan Applications", description = "API to get all active loan applications for a user.")

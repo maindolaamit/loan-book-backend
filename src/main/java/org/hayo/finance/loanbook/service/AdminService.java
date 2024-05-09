@@ -12,4 +12,6 @@ public interface AdminService {
     void approveLoanApplicationsForId(String userId, String applicationId);
 
     void rejectLoanApplicationsForId(String userId, String applicationId, String reason);
+
+    List<LoanApplication> getAllLoanApplications(String userId);
 }

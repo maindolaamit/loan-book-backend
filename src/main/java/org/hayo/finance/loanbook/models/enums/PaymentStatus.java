@@ -12,13 +12,4 @@ public enum PaymentStatus implements ValueEnum {
     PAID("Paid");
 
     private final String value;
-
-    public static PaymentStatus fromValue(String value) {
-        for (PaymentStatus paymentStatus : PaymentStatus.values()) {
-            if (paymentStatus.getValue().equals(value)) {
-                return paymentStatus;
-            }
-        }
-        throw new IllegalArgumentException("Invalid Application Status : " + value);
-    }
 }
