@@ -20,7 +20,7 @@ class EnumsTest {
     @DisplayName("Test PaymentStatus")
     void test2() {
         assertEquals(PaymentStatus.PENDING, PaymentStatus.valueOf("PENDING"));
-        assertEquals(PaymentStatus.REJECTED, PaymentStatus.valueOf("REJECTED"));
+        assertEquals(PaymentStatus.PARTIAL, PaymentStatus.valueOf("PARTIAL"));
         assertEquals(PaymentStatus.PAID, PaymentStatus.valueOf("PAID"));
 
         assertEquals("Pending", PaymentStatus.PENDING.getValue());

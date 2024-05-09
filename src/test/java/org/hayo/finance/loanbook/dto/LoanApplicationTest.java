@@ -25,7 +25,7 @@ class LoanApplicationTest {
 
         val schedule = LoanPaymentSchedule.builder()
                 .scheduleId(1L).dueDate(getStringDate(now.plusWeeks(1))).term(1)
-                .paymentAmount(100.0).status(PaymentStatus.PENDING)
+                .amountDue(100.0).amountPaid(0.0).status(PaymentStatus.PENDING)
                 .build();
 
         LoanApplication loanApplication = LoanApplication.builder()

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class LoanPaymentSchedulesMapperTest {
     private final LoanPaymentSchedulesMapper paymentScheduleMapper = Mappers.getMapper(LoanPaymentSchedulesMapper.class);
     private final LoanPaymentScheduleEntity request = LoanPaymentScheduleEntity.builder().
-            paymentAmount(1000.00).dueDate(LocalDateTime.now()).term(1).build();
+            amountDue(1000.00).amountPaid(0.0).dueDate(LocalDateTime.now()).term(1).build();
 
     @Test
     @DisplayName("Test toNewEntity")

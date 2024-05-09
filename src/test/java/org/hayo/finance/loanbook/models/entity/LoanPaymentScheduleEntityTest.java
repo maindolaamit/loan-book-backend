@@ -36,7 +36,7 @@ class LoanPaymentScheduleEntityTest {
         schedule = LoanPaymentScheduleEntity.builder()
                 .updatedAt(now).updatedBy("10").createdAt(now).createdBy("10")
                 .status(PaymentStatus.PENDING).dueDate(LoanUtility.getNextDueDate(now, 1))
-                .paymentAmount(100.0).loanApplication(loanApplicationEntity)
+                .amountDue(100.0).amountPaid(0.0).loanApplication(loanApplicationEntity)
                 .build();
 
         loanApplicationEntity.setPaymentSchedules(List.of(schedule));
