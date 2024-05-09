@@ -74,7 +74,7 @@ class LoanApplicationRepositoryTest {
     @Test
     @DisplayName("Find all applications by customer id")
     public void findAllByCustomerId() {
-        val applications = repository.findAllByCustomerId(1L);
+        val applications = repository.findAllByCustomerId("1");
         assertEquals(2, applications.size());
     }
 
@@ -91,7 +91,7 @@ class LoanApplicationRepositoryTest {
     public void test2() {
         val date = LocalDateTime.now();
         val build = LoanApplicationEntity.builder().applicationDate(date).createdAt(date).description("Test")
-                .description("Test").createdBy("10").updatedBy("10").loanAmount(1000.0).numOfTerms(12).customerId(10L)
+                .description("Test").createdBy("10").updatedBy("10").loanAmount(1000.0).numOfTerms(12).customerId("10")
                 .termFrequency(PaymentFrequency.WEEKLY).status(ApprovalStatus.PENDING).paymentStatus(PaymentStatus.PENDING)
                 .build();
         val save = repository.save(build);

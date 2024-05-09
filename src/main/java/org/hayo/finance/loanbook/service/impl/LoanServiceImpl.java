@@ -5,13 +5,17 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplication;
 import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.models.SearchLoanApplicationsRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
+import org.hayo.finance.loanbook.models.exceptions.InvalidValueException;
 import org.hayo.finance.loanbook.models.mapper.LoanApplicationMapper;
 import org.hayo.finance.loanbook.repository.LoanApplicationRepository;
 import org.hayo.finance.loanbook.service.LoanService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static org.hayo.finance.loanbook.repository.LoanApplicationsSpecifications.createSpecifications;
 
 @Slf4j
 @Service
@@ -33,13 +37,17 @@ public class LoanServiceImpl implements LoanService {
     }
 
     @Override
-    public List<LoanApplication> getLoanApplicationsForUser(String userId) {
-        return repository.findAllByCustomerId(userId).stream()
-                .map(mapper::toDto).toList();
+    public String repayLoanAmount(String userId) {
+        return null;
     }
 
     @Override
-    public String repayLoanAmount(String userId) {
-        return null;
+    public List<LoanApplication> searchLoanApplications(SearchLoanApplicationsRequest request) {
+        if (request == null) throw new InvalidValueException("Null optionValue passed for search request");
+        val specs = createSpecifications(request);
+        log.info("Searching loan applications forms with criteria: {}", specs.toString());
+        return repository.findAll(specs)
+                .stream()
+                .map(mapper::toDto).toList();
     }
 }

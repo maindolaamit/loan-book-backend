@@ -39,4 +39,7 @@ public class LoanUtility {
         return installments;
     }
 
+    public static boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty() || value.isBlank();
+    }
 }

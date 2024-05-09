@@ -12,7 +12,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hayo.finance.loanbook.dto.LoanApplication;
 import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
-import org.hayo.finance.loanbook.service.LoanService;
+import org.hayo.finance.loanbook.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +22,11 @@ import java.util.List;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("v1/user/{user-id}/")
+@RequestMapping("v1/customer/{customer-id}/")
 @Tag(name = "Customer APIs", description = "LoanBook Customer APIs/Endpoints")
-public class UserController {
+public class CustomerController {
 
-    private final LoanService service;
+    private final CustomerService service;
 
     @PostMapping("/loan/application/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,10 +38,10 @@ public class UserController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<String> submitLoanApplication(@Valid
-                                                        @PathVariable("user-id") @NotNull String userId,
+                                                        @PathVariable("customer-id") @NotNull String customerId,
                                                         @NotNull @RequestBody LoanApplicationRequest request) {
-        log.info("Received loan request for user: {}", userId);
-        LoanApplication application = service.newLoanApplication(userId, request);
+        log.info("Received loan request for user: {}", customerId);
+        LoanApplication application = service.submitNewLoanApplication(customerId, request);
         return new ResponseEntity<>(application.applicationId(), HttpStatus.CREATED);
     }
 
@@ -55,10 +55,10 @@ public class UserController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllLoanApplicationsForUser(@Valid
-                                                                               @PathVariable("user-id")
-                                                                               @NotBlank @NotNull String userId
+                                                                               @PathVariable("customer-id")
+                                                                               @NotBlank @NotNull String customerId
     ) {
-        var allApplications = service.getLoanApplicationsForUser(userId);
+        var allApplications = service.getAllLoanApplicationsForUser(customerId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
 
@@ -72,10 +72,10 @@ public class UserController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllActiveLoanApplicationsForUser(@Valid
-                                                                                     @PathVariable("user-id")
-                                                                                     @NotBlank @NotNull String userId
+                                                                                     @PathVariable("customer-id")
+                                                                                     @NotBlank @NotNull String customerId
     ) {
-        var allApplications = service.getLoanApplicationsForUser(userId);
+        var allApplications = service.getAllActiveLoanApplicationsForUser(customerId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
 
@@ -89,10 +89,10 @@ public class UserController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllInactiveLoanApplicationsForUser(@Valid
-                                                                                       @PathVariable("user-id")
-                                                                                       @NotBlank @NotNull String userId
+                                                                                       @PathVariable("customer-id")
+                                                                                       @NotBlank @NotNull String customerId
     ) {
-        var allApplications = service.getLoanApplicationsForUser(userId);
+        var allApplications = service.getInactiveLoanApplicationsForUser(customerId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
 
@@ -106,11 +106,11 @@ public class UserController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<String> repayLoanAmount(@Valid
-                                                  @PathVariable("user-id") @NotNull String userId,
+                                                  @PathVariable("customer-id") @NotNull String customerId,
                                                   @PathVariable("loan-id") @NotNull String loanId
     ) {
-        log.info("Received loan request for user: {}", userId);
-        String loanRequestId = service.repayLoanAmount(userId);
+        log.info("Received loan request for user: {}", customerId);
+        String loanRequestId = service.repayLoanAmount(customerId);
         return new ResponseEntity<>(loanRequestId, HttpStatus.CREATED);
     }
 }
