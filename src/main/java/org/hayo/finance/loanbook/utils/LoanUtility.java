@@ -8,6 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class LoanUtility {
+    public static LocalDateTime getNextDueDate(LocalDateTime lastDueDate, Integer term) {
+        return lastDueDate.plusWeeks(term);
+    }
+
     public static LocalDateTime getNextDueDate(LocalDateTime lastDueDate, Integer term, PaymentFrequency frequency) {
         return switch (frequency) {
             case MONTHLY -> lastDueDate.plusMonths(term);

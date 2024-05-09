@@ -8,7 +8,7 @@ import java.util.List;
 
 @Builder
 public record LoanApplication(
-        String applicationId, LocalDate applicationDate, Double loanAmount, String noOfTerms,
+        String applicationId, LocalDate applicationDate, Double loanAmount, Integer noOfTerms,
         String termFrequency, String status, String paymentStatus, String customerId, String rejectionReason,
         List<LoanPaymentSchedule> paymentSchedules
 ) {

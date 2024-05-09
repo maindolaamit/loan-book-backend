@@ -8,4 +8,8 @@ public interface AdminService {
     List<LoanApplication> getAllPendingLoanApplications(String userId);
 
     LoanApplication getLoanApplicationsForId(String userId, String applicationId);
+
+    void approveLoanApplicationsForId(String userId, String applicationId);
+
+    void rejectLoanApplicationsForId(String userId, String applicationId, String reason);
 }

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "cust_loan_applications", schema = "public")
+@Table(name = "cust_loan_applications")
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor

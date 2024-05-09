@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "cust_loan_payment_schedules", schema = "public")
+@Table(name = "cust_loan_payment_schedules")
 public class LoanPaymentScheduleEntity extends AbstractEntity {
     @Id
     @Column(name = "loan_schedule_id")

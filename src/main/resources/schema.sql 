@@ -1,7 +1,38 @@
-create table if not exists customers (
-    id bigserial not null,
-    name varchar not null,
-    email varchar not null,
-    primary key (id),
-    UNIQUE (email)
+create table if not exists cust_loan_applications
+(
+    id             bigserial primary key,
+    loan_amount    double precision not null,
+    num_of_terms   integer          not null,
+    description    varchar(255),
+    payment_status varchar(255)     not null
+        constraint cust_loan_applications_payment_status_check
+            check ((payment_status)::text = ANY
+                   ((ARRAY ['PENDING'::character varying, 'PAID'::character varying])::text[])),
+    status         varchar(255)     not null
+        constraint cust_loan_applications_status_check
+            check ((status)::text = ANY
+                   ((ARRAY ['PENDING'::character varying, 'APPROVED'::character varying, 'REJECTED'::character varying])::text[])),
+    term_frequency varchar(255)     not null,
+    title          varchar(255),
+    updated_by     varchar(255),
+    updated_at     timestamp(6),
+    created_by     varchar(255)     not null,
+    created_at     timestamp(6)     not null
+);
+
+create table if not exists cust_loan_payment_schedules
+(
+    id                  bigserial primary key,
+    due_date            date,
+    payment_amount      double precision,
+    status              smallint
+        constraint cust_loan_payment_schedules_status_check
+            check ((status >= 0) AND (status <= 1)),
+    loan_application_id bigint
+        constraint fkl1m27dx8686uvielmy0ev071i
+            references cust_loan_applications,
+    updated_by     varchar(255),
+    updated_at     timestamp(6),
+    created_by     varchar(255)     not null,
+    created_at     timestamp(6)     not null
 );

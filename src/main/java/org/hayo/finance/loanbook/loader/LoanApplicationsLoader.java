@@ -6,8 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.mapper.LoanApplicationMapper;
 import org.hayo.finance.loanbook.repository.LoanApplicationRepository;
+import org.mapstruct.factory.Mappers;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -22,22 +24,17 @@ import java.util.List;
 @Profile({"local", "test"})
 public class LoanApplicationsLoader implements CommandLineRunner {
     private final LoanApplicationRepository repository;
-    private final ObjectMapper objectMapper;
-    private final LoanApplicationMapper mapper;
 
     public void run(String... args) throws Exception {
         log.info("Loading Application data...");
         if (repository.count() > 0) {
             log.info("Loan Application data already loaded");
+            return;
         }
 
         try {
             log.info("Loan data not loaded, loading ...");
-            List<LoanApplicationRequest> applications = objectMapper.readValue(
-                    getPathname(),
-                    new TypeReference<>() {
-                    });
-            val list = applications.stream().map(mapper::toNewEntity).toList();
+            final var list = getLoanApplicationEntitiesFromDataFile();
             repository.saveAll(list);
             log.info("Loan data loaded,  no. of records {}", repository.count());
         } catch (IOException e) {
@@ -46,7 +43,17 @@ public class LoanApplicationsLoader implements CommandLineRunner {
         }
     }
 
-    public static File getPathname() {
+    public static List<LoanApplicationEntity> getLoanApplicationEntitiesFromDataFile() throws IOException {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        val instance = Mappers.getMapper(LoanApplicationMapper.class);
+        List<LoanApplicationRequest> applications = objectMapper.readValue(
+                getDataFilePathname(),
+                new TypeReference<>() {
+                });
+        return applications.stream().map(instance::toNewEntity).toList();
+    }
+
+    public static File getDataFilePathname() {
         return new File("src/main/resources/data/loan-applications.json");
     }
 }

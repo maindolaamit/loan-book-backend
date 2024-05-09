@@ -11,7 +11,7 @@ spring:
       hibernate:
         format_sql: true
   datasource:
-    username: postgres
+    username: loan
     password: example
-    url: jdbc:postgresql://localhost:5433/postgres
+    url: jdbc:postgresql://localhost:5433/loan-db
     driver-class-name: org.postgresql.Driver

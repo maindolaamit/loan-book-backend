@@ -8,6 +8,7 @@ import org.hayo.finance.loanbook.utils.EnumUtility;
 @Getter
 public enum PaymentStatus implements ValueEnum {
     PENDING("Pending"),
+    REJECTED("Rejected"),
     PAID("Paid");
 
     private final String value;

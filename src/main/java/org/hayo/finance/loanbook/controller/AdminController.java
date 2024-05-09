@@ -11,6 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hayo.finance.loanbook.dto.LoanApplication;
+import org.hayo.finance.loanbook.dto.LoanApplicationRejectRequest;
 import org.hayo.finance.loanbook.service.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,6 +41,7 @@ public class AdminController {
                                                                                @PathVariable("admin-id")
                                                                                @NotBlank @NotNull String userId
     ) {
+        log.info("Getting all pending loan applications for admin: {}", userId);
         var allApplications = service.getAllPendingLoanApplications(userId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
@@ -54,12 +56,58 @@ public class AdminController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<LoanApplication> getLoanApplicationsForId(@Valid
-                                                                          @PathVariable("admin-id")
-                                                                          String userId,
-                                                                          @PathVariable("application-id")
-                                                                          @NotBlank @NotNull String applicationId
+                                                                    @PathVariable("admin-id")
+                                                                    String userId,
+                                                                    @PathVariable("application-id")
+                                                                    @NotBlank @NotNull String applicationId
     ) {
         var application = service.getLoanApplicationsForId(userId, applicationId);
         return new ResponseEntity<>(application, HttpStatus.OK);
+    }
+
+
+    @PutMapping("/loan/application/{application-id}/approve")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Approve Loan Application", description = "API to approve a loan application for a user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<String> approveLoanApplicationsForId(@Valid
+                                                               @PathVariable("admin-id")
+                                                               String userId,
+                                                               @PathVariable("application-id")
+                                                               @NotBlank @NotNull String applicationId
+    ) {
+        service.approveLoanApplicationsForId(userId, applicationId);
+        String message = "Loan Application Approved";
+        return new ResponseEntity<>(message, HttpStatus.OK);
+    }
+
+
+    @PutMapping("/loan/application/{application-id}/reject")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Reject Loan Application", description = "API to reject a loan application for a user.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved",
+                    content = @Content(mediaType = "application/json")),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = @Content(mediaType = "application/json"))
+    })
+    public ResponseEntity<String> rejectLoanApplicationsForId(@Valid
+                                                              @PathVariable("admin-id")
+                                                              @NotBlank @NotNull
+                                                              String userId,
+                                                              @PathVariable("application-id")
+                                                              @NotBlank @NotNull
+                                                              String applicationId,
+                                                              @NotNull @RequestBody
+                                                              LoanApplicationRejectRequest reason
+    ) {
+        service.rejectLoanApplicationsForId(userId, applicationId, reason.rejectionReason());
+        String message = "Loan Application Rejected successfully";
+        return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }
