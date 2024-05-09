@@ -9,7 +9,9 @@ you to calculate your EMI.
 - Database: PostgresSQL
 
 ## Assumptions
-PostgresSQL is used as the database which is a SQL database. The nature of the data is structured and hence a SQL database is used. 
+- PostgresSQL is used as the database which is a SQL database. The nature of the data is structured and hence a SQL database is used. 
+- Repay is done on Loan basis and not on EMI basis. The user can repay the loan amount more than EMI amount.
+- Due to limited time and resources, interest calculation is not implemented. The interest calculation can be implemented in the future.
 
 ### Installation Software required
 - Docker

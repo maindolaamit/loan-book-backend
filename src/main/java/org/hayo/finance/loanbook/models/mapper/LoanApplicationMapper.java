@@ -6,6 +6,7 @@ import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.entity.LoanPaymentScheduleEntity;
 import org.hayo.finance.loanbook.models.enums.PaymentFrequency;
+import org.hayo.finance.loanbook.models.enums.PaymentStatus;
 import org.hayo.finance.loanbook.utils.EnumUtility;
 import org.hayo.finance.loanbook.utils.LoanUtility;
 import org.mapstruct.Mapper;
@@ -21,6 +22,7 @@ public interface LoanApplicationMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "loanAmount", source = "request.amount")
+    @Mapping(target = "amountPaid", constant = "0.0")
     @Mapping(target = "numOfTerms", source = "request.terms")
     @Mapping(target = "status", expression = "java(org.hayo.finance.loanbook.models.enums.ApprovalStatus.PENDING)")
     @Mapping(target = "paymentSchedules", expression = "java(getPaymentSchedules(request))")
@@ -48,7 +50,9 @@ public interface LoanApplicationMapper {
                             .createdBy(request.customerId())
                             .updatedBy(request.customerId())
                             .dueDate(dueDate)
-                            .paymentAmount(payments.get(i))
+                            .status(PaymentStatus.PENDING)
+                            .amountDue(payments.get(i))
+                            .amountPaid(0.0)
                             .term(i + 1)
                             .build();
                     schedules.add(schedule);
@@ -57,5 +61,6 @@ public interface LoanApplicationMapper {
     }
 
     @Mapping(target = "applicationId", source = "id")
+    @Mapping(target = "applicationDate", expression = "java(org.hayo.finance.loanbook.utils.LoanUtility.getStringDate(entity.getApplicationDate()))")
     LoanApplication toDto(LoanApplicationEntity entity);
 }

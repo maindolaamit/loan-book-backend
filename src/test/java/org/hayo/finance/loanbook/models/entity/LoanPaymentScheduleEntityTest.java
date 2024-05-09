@@ -30,7 +30,7 @@ class LoanPaymentScheduleEntityTest {
                 .applicationDate(now).updatedAt(now).updatedBy("10").createdAt(now).createdBy("10")
                 .description("Test").rejectionReason("").paymentStatus(PaymentStatus.PENDING)
                 .status(ApprovalStatus.PENDING).termFrequency(PaymentFrequency.WEEKLY)
-                .customerId(1L).numOfTerms(12).loanAmount(1000.0)
+                .customerId("1").numOfTerms(12).loanAmount(1000.0)
                 .build();
 
         schedule = LoanPaymentScheduleEntity.builder()
@@ -48,7 +48,7 @@ class LoanPaymentScheduleEntityTest {
         assertEquals("10", schedule.getUpdatedBy());
         assertEquals(PaymentStatus.PENDING, schedule.getStatus());
         assertEquals(LoanUtility.getNextDueDate(now, 1), schedule.getDueDate());
-        assertEquals(100.0, schedule.getPaymentAmount());
+        assertEquals(100.0, schedule.getAmountDue());
         assertEquals(loanApplicationEntity, schedule.getLoanApplication());
         assertEquals(loanApplicationEntity.getPaymentSchedules().get(0), schedule);
     }

@@ -29,7 +29,7 @@ class LoanApplicationEntityTest {
                 .paymentStatus(PaymentStatus.PENDING)
                 .status(ApprovalStatus.PENDING)
                 .termFrequency(PaymentFrequency.WEEKLY)
-                .numOfTerms(12).customerId(10L).loanAmount(1000.0)
+                .numOfTerms(12).customerId("10").loanAmount(1000.0)
                 .createdBy("10").createdAt(now).updatedAt(now).updatedBy("10")
                 .build();
 
@@ -41,7 +41,7 @@ class LoanApplicationEntityTest {
         assertEquals(ApprovalStatus.PENDING, entity.getStatus());
         assertEquals(PaymentFrequency.WEEKLY, entity.getTermFrequency());
         assertEquals(12, entity.getNumOfTerms());
-        assertEquals(10L, entity.getCustomerId());
+        assertEquals("10", entity.getCustomerId());
         assertEquals(1000.0, entity.getLoanAmount());
         assertEquals("10", entity.getCreatedBy());
         assertEquals(now, entity.getCreatedAt());

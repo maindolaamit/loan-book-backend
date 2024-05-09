@@ -105,12 +105,13 @@ public class CustomerController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> repayLoanAmount(@Valid
-                                                  @PathVariable("customer-id") @NotNull String customerId,
-                                                  @PathVariable("loan-id") @NotNull String loanId
+    public ResponseEntity<LoanApplication> repayLoanAmount(@Valid
+                                                           @PathVariable("customer-id") @NotNull String customerId,
+                                                           @PathVariable("loan-id") @NotNull String loanId,
+                                                           @RequestParam("amount") @NotNull Double amount
     ) {
         log.info("Received loan request for user: {}", customerId);
-        String loanRequestId = service.repayLoanAmount(customerId);
+        LoanApplication loanRequestId = service.repayLoanAmount(customerId, loanId, amount);
         return new ResponseEntity<>(loanRequestId, HttpStatus.CREATED);
     }
 }

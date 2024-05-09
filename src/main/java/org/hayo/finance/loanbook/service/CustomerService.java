@@ -1,5 +1,6 @@
 package org.hayo.finance.loanbook.service;
 
+import jakarta.validation.constraints.NotNull;
 import org.hayo.finance.loanbook.dto.LoanApplication;
 import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
 
@@ -13,7 +14,7 @@ public interface CustomerService {
 
     List<LoanApplication> getAllActiveLoanApplicationsForUser(String customerId);
 
-    String repayLoanAmount(String userId);
+    LoanApplication repayLoanAmount(String customerId, String loanApplicationId, @NotNull Double amount);
 
     List<LoanApplication> getAllLoanApplicationsForUser(String customerId);
 }

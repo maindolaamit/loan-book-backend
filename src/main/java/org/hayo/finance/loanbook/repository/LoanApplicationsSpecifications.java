@@ -1,8 +1,10 @@
 package org.hayo.finance.loanbook.repository;
 
+import lombok.val;
 import org.hayo.finance.loanbook.models.SearchLoanApplicationsRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
+import org.hayo.finance.loanbook.models.enums.PaymentStatus;
 import org.hayo.finance.loanbook.utils.LoanUtility;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -20,6 +22,13 @@ public class LoanApplicationsSpecifications {
 
     public static Specification<LoanApplicationEntity> getSpecForStatus(ApprovalStatus status) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.equal(root.get("status"), status);
+    }
+
+    private static Specification<LoanApplicationEntity> getSpecForPaymentStatus(PaymentStatus status) {
+        return (root, query, criteriaBuilder) -> {
+            val join = root.join("paymentSchedules");
+            return criteriaBuilder.equal(join.get("status"), status);
+        };
     }
 
     public static Specification<LoanApplicationEntity> getSpecForCustomerId(String customerId) {
@@ -40,6 +49,13 @@ public class LoanApplicationsSpecifications {
         Specification<LoanApplicationEntity> spec = Specification.where((root, query, criteriaBuilder) ->
                 criteriaBuilder.equal(criteriaBuilder.literal(1), 1));
 
+        if (request.paymentStatuses() != null && !request.paymentStatuses().isEmpty()) {
+            for (val status : request.paymentStatuses()) {
+                if (status == null)
+                    throw new IllegalArgumentException("Invalid status value");
+                spec = spec.and(getSpecForPaymentStatus(status));
+            }
+        }
         if (request.minAmount() != null)
             spec = spec.and(getSpecForMinAmount(request.minAmount()));
         if (request.maxAmount() != null)

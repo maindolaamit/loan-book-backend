@@ -7,6 +7,10 @@ spring:
     properties:
       hibernate:
         format_sql: true
+  datasource:
+    username: loan
+    password: example
+    driver-class-name: org.postgresql.Driver
 
   sql:
     init:

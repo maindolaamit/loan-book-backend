@@ -66,4 +66,20 @@ class LoanUtilityTest {
         assertEquals(258.14, payments2.get(5));
         assertEquals(258.16, payments2.get(6));
     }
+
+    @Test
+    @DisplayName("Test isNullOrEmpty")
+    void isNullOrEmpty() {
+        assertTrue(LoanUtility.isNullOrEmpty(null));
+        assertTrue(LoanUtility.isNullOrEmpty(""));
+        assertTrue(LoanUtility.isNullOrEmpty(" "));
+        assertFalse(LoanUtility.isNullOrEmpty("test"));
+    }
+
+    @Test
+    @DisplayName("Test getStringDate")
+    void getStringDate() {
+        val date = LocalDateTime.of(2021, 10, 10, 10, 10);
+        assertEquals("10/10/2021", LoanUtility.getStringDate(date));
+    }
 }

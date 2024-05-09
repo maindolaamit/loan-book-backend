@@ -20,11 +20,11 @@ public class LoanPaymentScheduleEntity extends AbstractEntity {
     @Column(name = "loan_schedule_id")
     private Long id;
     private LocalDateTime dueDate;
-    private Double paymentAmount;
     private Integer term;
+    private Double amountDue;
     //    private Double principal;
 //    private Double interest;
-//    private Double balance;
+    private Double amountPaid;
     private PaymentStatus status;
 
     @ManyToOne

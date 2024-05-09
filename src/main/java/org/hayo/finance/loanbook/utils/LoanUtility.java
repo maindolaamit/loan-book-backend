@@ -4,6 +4,7 @@ import org.hayo.finance.loanbook.models.enums.PaymentFrequency;
 
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,5 +42,10 @@ public class LoanUtility {
 
     public static boolean isNullOrEmpty(String value) {
         return value == null || value.isEmpty() || value.isBlank();
+    }
+
+    public static String getStringDate(LocalDateTime date) {
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        return dateFormat.format(date);
     }
 }

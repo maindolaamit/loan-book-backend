@@ -29,6 +29,7 @@ public class LoanApplicationEntity extends AbstractEntity {
     @NotNull(message = "Loan Amount is required")
     @Min(value = 100, message = "Min Loan amount must be 100")
     Double loanAmount;
+    Double amountPaid;
     @NotNull(message = "Status is required")
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status;
