@@ -12,11 +12,13 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hayo.finance.loanbook.dto.LoanApplication;
 import org.hayo.finance.loanbook.dto.LoanApplicationRejectRequest;
+import org.hayo.finance.loanbook.dto.response.BasicApiResponse;
 import org.hayo.finance.loanbook.service.AdminService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Slf4j
@@ -41,7 +43,7 @@ public class AdminController {
                                                                         @PathVariable("admin-id")
                                                                         @NotBlank @NotNull String userId
     ) {
-        log.info("Getting all loan applications for admin: {}", userId);
+        log.info("Getting all loan applications from service for admin: {}", userId);
         var allApplications = service.getAllLoanApplications(userId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
@@ -59,7 +61,7 @@ public class AdminController {
                                                                                @PathVariable("admin-id")
                                                                                @NotBlank @NotNull String userId
     ) {
-        log.info("Getting all pending loan applications for admin: {}", userId);
+        log.info("Getting all pending loan applications from service for admin: {}", userId);
         var allApplications = service.getAllPendingLoanApplications(userId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
@@ -79,6 +81,7 @@ public class AdminController {
                                                                     @PathVariable("application-id")
                                                                     @NotBlank @NotNull String applicationId
     ) {
+        log.info("Getting loan application from service for admin: {} and applicationId: {}", userId, applicationId);
         var application = service.getLoanApplicationsForId(userId, applicationId);
         return new ResponseEntity<>(application, HttpStatus.OK);
     }
@@ -93,14 +96,16 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "Not Found",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> approveLoanApplicationsForId(@Valid
-                                                               @PathVariable("admin-id")
-                                                               String userId,
-                                                               @PathVariable("application-id")
-                                                               @NotBlank @NotNull String applicationId
+    public ResponseEntity<BasicApiResponse> approveLoanApplicationsForId(@Valid
+                                                                         @PathVariable("admin-id")
+                                                                         String userId,
+                                                                         @PathVariable("application-id")
+                                                                         @NotBlank @NotNull String applicationId
     ) {
+        log.info("Approving loan application from service for admin: {} and applicationId: {}", userId, applicationId);
         service.approveLoanApplicationsForId(userId, applicationId);
-        String message = "Loan Application Approved";
+        BasicApiResponse message = BasicApiResponse.builder()
+                .message("Loan Application Approved").timestamp(LocalDateTime.now()).build();
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 
@@ -114,18 +119,20 @@ public class AdminController {
             @ApiResponse(responseCode = "404", description = "Not Found",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> rejectLoanApplicationsForId(@Valid
-                                                              @PathVariable("admin-id")
-                                                              @NotBlank @NotNull
-                                                              String userId,
-                                                              @PathVariable("application-id")
-                                                              @NotBlank @NotNull
-                                                              String applicationId,
-                                                              @NotNull @RequestBody
-                                                              LoanApplicationRejectRequest reason
+    public ResponseEntity<BasicApiResponse> rejectLoanApplicationsForId(@Valid
+                                                                        @PathVariable("admin-id")
+                                                                        @NotBlank @NotNull
+                                                                        String userId,
+                                                                        @PathVariable("application-id")
+                                                                        @NotBlank @NotNull
+                                                                        String applicationId,
+                                                                        @NotNull @RequestBody
+                                                                        LoanApplicationRejectRequest reason
     ) {
+        log.info("Rejecting loan application from service for admin: {} and applicationId: {}", userId, applicationId);
         service.rejectLoanApplicationsForId(userId, applicationId, reason.rejectionReason());
-        String message = "Loan Application Rejected successfully";
+        BasicApiResponse message = BasicApiResponse.builder().message("Loan Application Rejected successfully")
+                .timestamp(LocalDateTime.now()).build();
         return new ResponseEntity<>(message, HttpStatus.OK);
     }
 }

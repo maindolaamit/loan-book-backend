@@ -7,6 +7,7 @@ import org.hayo.finance.loanbook.models.enums.PaymentFrequency;
 
 @Builder
 public record LoanApplicationRequest(
+        @NotNull
         @Min(value = 100, message = "Min Loan amount must be 100")
         Double amount,
         @NotNull

@@ -22,7 +22,6 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public LoanApplication newLoanApplication(String userId, LoanApplicationRequest request) {
-        Long customerId = Long.parseLong(userId);
         val newRequest = LoanApplicationRequest.copyWithUserId(request, userId);
         // create loan schedules based on frequency, amount and terms
         log.info("Creating new loan application");
@@ -35,14 +34,12 @@ public class LoanServiceImpl implements LoanService {
 
     @Override
     public List<LoanApplication> getLoanApplicationsForUser(String userId) {
-        Long customerId = Long.parseLong(userId);
-        return repository.findAllByCustomerId(customerId).stream()
+        return repository.findAllByCustomerId(userId).stream()
                 .map(mapper::toDto).toList();
     }
 
     @Override
     public String repayLoanAmount(String userId) {
-        Long customerId = Long.parseLong(userId);
         return null;
     }
 }

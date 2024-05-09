@@ -24,7 +24,7 @@ public class LoanApplicationEntity extends AbstractEntity {
     @Id
     @Column(name = "loan_application_id")
     private Long id;
-    private Long customerId;
+    private String customerId;
     LocalDateTime applicationDate;
     @NotNull(message = "Loan Amount is required")
     @Min(value = 100, message = "Min Loan amount must be 100")

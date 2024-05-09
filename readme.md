@@ -5,8 +5,7 @@ you to calculate your EMI.
 
 ## Tech Stack
 
-- Frontend: React, HTML, CSS, JavaScript
-- Backend: Java, Spring Boot
+- Backend: Java, Spring Boot, Hibernate
 - Database: PostgresSQL
 
 ## Assumptions
@@ -14,6 +13,9 @@ PostgresSQL is used as the database which is a SQL database. The nature of the d
 
 ### Installation Software required
 - Docker
+- Java 17
+- Maven for build/test/run automation
+- IntelliJ Community Edition(Optional)
 
 ### Installation Steps
 
@@ -40,7 +42,7 @@ the above command will generate a jar file in the target folder, to run the jar 
 mvn spring-boot:run -Dspring-boot.run.profiles=local
 ```
 
-4. Open the browser and navigate to http://localhost:3000/api/swagger-ui.html
+4. Open the browser and navigate to http://localhost:8080/api/swagger-ui.html
 5. You can now see the application up and running
 6. You can also test the APIs using the Swagger UI/Postman/curl
 

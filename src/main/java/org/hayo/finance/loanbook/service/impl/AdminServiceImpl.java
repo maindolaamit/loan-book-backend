@@ -1,4 +1,4 @@
-package org.hayo.finance.loanbook.service;
+package org.hayo.finance.loanbook.service.impl;
 
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
@@ -12,6 +12,7 @@ import org.hayo.finance.loanbook.models.exceptions.InvalidLoanStatusException;
 import org.hayo.finance.loanbook.models.exceptions.RecordNotFoundException;
 import org.hayo.finance.loanbook.models.mapper.LoanApplicationMapper;
 import org.hayo.finance.loanbook.repository.LoanApplicationRepository;
+import org.hayo.finance.loanbook.service.AdminService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
