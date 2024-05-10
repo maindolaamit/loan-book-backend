@@ -23,6 +23,8 @@ class LoanUtilityTest {
 
         val weeklyDueDate = LoanUtility.getNextDueDate(applicationDate, 1, PaymentFrequency.WEEKLY);
         assertEquals(applicationDate.plusWeeks(1), weeklyDueDate);
+
+        assertEquals(applicationDate.plusWeeks(4), LoanUtility.getNextDueDate(applicationDate, 4));
     }
 
     @Test

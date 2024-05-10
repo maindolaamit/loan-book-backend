@@ -1,4 +1,7 @@
 spring:
+  sql:
+    init:
+      mode: always
   jpa:
     show-sql: true
     hibernate:
@@ -7,12 +10,9 @@ spring:
     properties:
       hibernate:
         format_sql: true
-  datasource:
-    username: loan
-    password: example
-    driver-class-name: org.postgresql.Driver
+#  datasource:
+#    username: test
+#    password: test
 
-  sql:
-    init:
-      mode: always
+#    driver-class-name: org.postgresql.Driver
 

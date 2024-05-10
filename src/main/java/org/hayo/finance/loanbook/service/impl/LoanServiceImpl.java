@@ -59,6 +59,22 @@ public class LoanServiceImpl implements LoanService {
             throw new InvalidLoanStatusException("Loan is already paid.");
         }
 
+        if (repayAmount > entity.getLoanAmount() - entity.getAmountPaid()) {
+            throw new InvalidValueException("Repay amount is greater than the loan amount.");
+        }
+
+        // if repay amount = amount left to pay, mark the loan as paid
+        if (repayAmount == entity.getLoanAmount() - entity.getAmountPaid()) {
+            entity.setPaymentStatus(PaymentStatus.PAID);
+            entity.setAmountPaid(entity.getLoanAmount());
+            entity.getPaymentSchedules().forEach(
+                    schedule -> {
+                        schedule.setStatus(PaymentStatus.PAID);
+                        schedule.setAmountPaid(schedule.getAmountDue());
+                    }
+            );
+        }
+
         // Repay the loan
         var totalBalanceLeft = entity.getLoanAmount() - entity.getAmountPaid();
         val schedules = entity.getPaymentSchedules();

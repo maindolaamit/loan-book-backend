@@ -57,7 +57,7 @@ public class CustomerServiceImpl implements CustomerService {
         if (loanService.applicationNotExists(loanApplicationId)) {
             throw new RecordNotFoundException("Loan Application not found for customer: " + customerId);
         }
-        if (amount <= 0) {
+        if (amount <= 0.0) {
             throw new InvalidValueException("Invalid amount for loan repayment, should be greater than 0.");
         }
         return loanService.repayLoanAmount(loanApplicationId, amount);
