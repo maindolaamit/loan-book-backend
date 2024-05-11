@@ -1,6 +1,6 @@
 package org.hayo.finance.loanbook.repository;
 
-import org.hayo.finance.loanbook.models.SearchLoanApplicationsRequest;
+import org.hayo.finance.loanbook.dto.SearchLoanApplicationsRequest;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

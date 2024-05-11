@@ -45,7 +45,7 @@ public class LoanUtility {
     }
 
     public static String getStringDate(LocalDateTime date) {
-        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd-MMM-yyyy");
         return dateFormat.format(date);
     }
 }

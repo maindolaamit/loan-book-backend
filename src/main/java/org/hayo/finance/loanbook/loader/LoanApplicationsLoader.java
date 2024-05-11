@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.mapper.LoanApplicationMapper;
 import org.hayo.finance.loanbook.repository.LoanApplicationRepository;
@@ -46,7 +46,7 @@ public class LoanApplicationsLoader implements CommandLineRunner {
     public static List<LoanApplicationEntity> getLoanApplicationEntitiesFromDataFile() throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
         val instance = Mappers.getMapper(LoanApplicationMapper.class);
-        List<LoanApplicationRequest> applications = objectMapper.readValue(
+        List<NewLoanApplicationRequest> applications = objectMapper.readValue(
                 getDataFilePathname(),
                 new TypeReference<>() {
                 });

@@ -1,4 +1,4 @@
-package org.hayo.finance.loanbook.models;
+package org.hayo.finance.loanbook.dto;
 
 import lombok.Builder;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;

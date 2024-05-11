@@ -1,7 +1,7 @@
 package org.hayo.finance.loanbook.models.mapper;
 
 import lombok.val;
-import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +20,7 @@ class LoanApplicationMapperTest {
     private final LoanPaymentSchedulesMapper paymentSchedulesMapper = Mappers.getMapper(LoanPaymentSchedulesMapper.class);
     @InjectMocks
     private final LoanApplicationMapper loanApplicationMapper = Mappers.getMapper(LoanApplicationMapper.class);
-    private final LoanApplicationRequest request = LoanApplicationRequest.builder().
+    private final NewLoanApplicationRequest request = NewLoanApplicationRequest.builder().
             terms(10).amount(1000.00)
             .customerId("1")
             .termFrequency("WEEKLY").build();
@@ -37,8 +37,8 @@ class LoanApplicationMapperTest {
     void toDto() {
         val entity = loanApplicationMapper.toNewEntity(request);
         assertNotNull(entity);
-        assertEquals(entity.getLoanAmount(), request.amount());
-        assertEquals(entity.getNumOfTerms(), request.terms());
+        assertEquals(entity.getLoanAmount(), request.getAmount());
+        assertEquals(entity.getNumOfTerms(), request.getTerms());
 
 //        when(paymentSchedulesMapper.toDto(any())).thenReturn(null);
 //        val dto = loanApplicationMapper.toDto(entity);

@@ -2,7 +2,7 @@ package org.hayo.finance.loanbook.service;
 
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
 import org.hayo.finance.loanbook.it.AbstractIntegrationTest;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
 import org.hayo.finance.loanbook.models.enums.PaymentStatus;
@@ -46,7 +46,7 @@ public class IntegrationServiceTest extends AbstractIntegrationTest {
     @DisplayName("Create a new loan application")
     public void testCreateNewLoanApplication() {
         String userId = "100";
-        var loanApplication = LoanApplicationRequest.builder().amount(1000.0).terms(3).build();
+        var loanApplication = NewLoanApplicationRequest.builder().amount(1000.0).terms(3).build();
         assertNotNull(loanApplication);
         val submitted = customerService.submitNewLoanApplication(userId, loanApplication);
         assertNotNull(submitted);
@@ -68,7 +68,7 @@ public class IntegrationServiceTest extends AbstractIntegrationTest {
     public void testGetAllLoanApplications() {
         var loanApplicationsBefore = adminService.getAllLoanApplications("amit");
         String userId = "100";
-        var loanApplication = LoanApplicationRequest.builder().amount(1000.0).terms(3).build();
+        var loanApplication = NewLoanApplicationRequest.builder().amount(1000.0).terms(3).build();
         assertNotNull(loanApplication);
         loanService.newLoanApplication(userId, loanApplication);
         loanService.newLoanApplication(userId, loanApplication);
@@ -87,7 +87,7 @@ public class IntegrationServiceTest extends AbstractIntegrationTest {
         assertThrows(RecordNotFoundException.class, () -> adminService.approveLoanApplicationsForId("amit", "100"));
 
         // Valid application id
-        var loanApplicationRequest = LoanApplicationRequest.builder().amount(1000.0).terms(3).build();
+        var loanApplicationRequest = NewLoanApplicationRequest.builder().amount(1000.0).terms(3).build();
         assertNotNull(loanApplicationRequest);
         val submitted = loanService.newLoanApplication(userId, loanApplicationRequest);
         assertNotNull(submitted);
@@ -111,7 +111,7 @@ public class IntegrationServiceTest extends AbstractIntegrationTest {
         assertThrows(RecordNotFoundException.class, () -> adminService.approveLoanApplicationsForId("amit", "100"));
 
         // Valid application id
-        var loanApplicationRequest = LoanApplicationRequest.builder().amount(1000.0).terms(3).build();
+        var loanApplicationRequest = NewLoanApplicationRequest.builder().amount(1000.0).terms(3).build();
         assertNotNull(loanApplicationRequest);
         val submitted = loanService.newLoanApplication(userId, loanApplicationRequest);
         assertNotNull(submitted);
@@ -131,7 +131,7 @@ public class IntegrationServiceTest extends AbstractIntegrationTest {
     @DisplayName("Customer repays loan amount")
     public void testRepayLoanAmount() {
         String userId = "100";
-        var loanApplicationRequest = LoanApplicationRequest.builder().amount(1000.0).terms(3).build();
+        var loanApplicationRequest = NewLoanApplicationRequest.builder().amount(1000.0).terms(3).build();
         assertNotNull(loanApplicationRequest);
         val submitted = loanService.newLoanApplication(userId, loanApplicationRequest);
         assertNotNull(submitted);

@@ -2,7 +2,7 @@ package org.hayo.finance.loanbook.models.mapper;
 
 import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplication;
-import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.entity.LoanPaymentScheduleEntity;
 import org.hayo.finance.loanbook.models.enums.PaymentFrequency;
@@ -33,22 +33,22 @@ public interface LoanApplicationMapper {
     @Mapping(target = "createdAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "updatedAt", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "applicationDate", expression = "java(java.time.LocalDateTime.now())")
-    LoanApplicationEntity toNewEntity(LoanApplicationRequest request);
+    LoanApplicationEntity toNewEntity(NewLoanApplicationRequest request);
 
-    default List<LoanPaymentScheduleEntity> getPaymentSchedules(LoanApplicationRequest request) {
-        val payments = LoanUtility.getInstallmentPerTerm(request.amount(), request.terms());
+    default List<LoanPaymentScheduleEntity> getPaymentSchedules(NewLoanApplicationRequest request) {
+        val payments = LoanUtility.getInstallmentPerTerm(request.getAmount(), request.getTerms());
         List<LoanPaymentScheduleEntity> schedules = new ArrayList<>();
         val applicationDate = LocalDateTime.now();
-        val frequency = EnumUtility.fromValue(PaymentFrequency.class, request.termFrequency());
-        IntStream.range(0, request.terms())
+        val frequency = EnumUtility.fromValue(PaymentFrequency.class, request.getTermFrequency());
+        IntStream.range(0, request.getTerms())
                 .forEach(i -> {
                     LocalDateTime dueDate = LoanUtility
                             .getNextDueDate(applicationDate, i, frequency);
                     val schedule = LoanPaymentScheduleEntity.builder()
                             .createdAt(applicationDate)
                             .updatedAt(applicationDate)
-                            .createdBy(request.customerId())
-                            .updatedBy(request.customerId())
+                            .createdBy(request.getCustomerId())
+                            .updatedBy(request.getCustomerId())
                             .dueDate(dueDate)
                             .status(PaymentStatus.PENDING)
                             .amountDue(payments.get(i))

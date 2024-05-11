@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hayo.finance.loanbook.dto.LoanApplication;
-import org.hayo.finance.loanbook.dto.LoanApplicationRejectRequest;
+import org.hayo.finance.loanbook.dto.request.LoanApplicationRejectRequest;
 import org.hayo.finance.loanbook.dto.response.BasicApiResponse;
 import org.hayo.finance.loanbook.service.AdminService;
 import org.springframework.http.HttpStatus;

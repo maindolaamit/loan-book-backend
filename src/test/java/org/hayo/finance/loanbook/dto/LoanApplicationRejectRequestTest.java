@@ -1,5 +1,6 @@
 package org.hayo.finance.loanbook.dto;
 
+import org.hayo.finance.loanbook.dto.request.LoanApplicationRejectRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

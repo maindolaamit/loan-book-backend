@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplication;
-import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
-import org.hayo.finance.loanbook.models.SearchLoanApplicationsRequest;
+import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.SearchLoanApplicationsRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.entity.LoanPaymentScheduleEntity;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
@@ -34,8 +34,8 @@ public class LoanServiceImpl implements LoanService {
     LoanApplicationMapper mapper;
 
     @Override
-    public LoanApplication newLoanApplication(String userId, LoanApplicationRequest request) {
-        val newRequest = LoanApplicationRequest.copyWithUserId(request, userId);
+    public LoanApplication newLoanApplication(String userId, NewLoanApplicationRequest request) {
+        val newRequest = NewLoanApplicationRequest.copyWithUserId(request, userId);
         // create loan schedules based on frequency, amount and terms
         log.info("Creating new loan application");
         LoanApplicationEntity entity = mapper.toNewEntity(newRequest);

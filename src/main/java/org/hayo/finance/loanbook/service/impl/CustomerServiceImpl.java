@@ -5,8 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplication;
-import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
-import org.hayo.finance.loanbook.models.SearchLoanApplicationsRequest;
+import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.SearchLoanApplicationsRequest;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
 import org.hayo.finance.loanbook.models.enums.PaymentStatus;
 import org.hayo.finance.loanbook.models.exceptions.InvalidValueException;
@@ -25,7 +25,7 @@ public class CustomerServiceImpl implements CustomerService {
     private final LoanService loanService;
 
     @Override
-    public LoanApplication submitNewLoanApplication(String customerId, LoanApplicationRequest request) {
+    public LoanApplication submitNewLoanApplication(String customerId, NewLoanApplicationRequest request) {
         return loanService.newLoanApplication(customerId, request);
     }
 

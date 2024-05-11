@@ -1,7 +1,7 @@
 package org.hayo.finance.loanbook.repository;
 
 import lombok.val;
-import org.hayo.finance.loanbook.models.SearchLoanApplicationsRequest;
+import org.hayo.finance.loanbook.dto.SearchLoanApplicationsRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
 import org.hayo.finance.loanbook.models.enums.PaymentStatus;

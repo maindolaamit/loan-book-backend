@@ -1,4 +1,4 @@
-package org.hayo.finance.loanbook.dto;
+package org.hayo.finance.loanbook.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

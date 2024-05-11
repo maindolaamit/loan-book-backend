@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hayo.finance.loanbook.dto.LoanApplication;
-import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
 import org.hayo.finance.loanbook.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +37,12 @@ public class CustomerController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> submitLoanApplication(@Valid
+    public ResponseEntity<LoanApplication> submitLoanApplication(@Valid
                                                         @PathVariable("customer-id") @NotNull String customerId,
-                                                        @NotNull @RequestBody LoanApplicationRequest request) {
+                                                        @NotNull @RequestBody NewLoanApplicationRequest request) {
         log.info("Received loan request for user: {}", customerId);
         LoanApplication application = service.submitNewLoanApplication(customerId, request);
-        return new ResponseEntity<>(application.applicationId(), HttpStatus.CREATED);
+        return new ResponseEntity<>(application, HttpStatus.CREATED);
     }
 
     @GetMapping("/loan/application/all")
@@ -64,7 +64,7 @@ public class CustomerController {
 
     @GetMapping("/loan/application/active")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get all Active Loan Applications", description = "API to get all active loan applications for a user.")
+    @Operation(summary = "Get all Active/Pending/Approved Loan Applications", description = "API to get all active loan applications for a user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved",
                     content = @Content(mediaType = "application/json")),
@@ -81,7 +81,7 @@ public class CustomerController {
 
     @GetMapping("/loan/application/inactive")
     @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Get all Inactive Loan Applications", description = "API to get all inactive loan applications for a user.")
+    @Operation(summary = "Get all Inactive/Paid/Rejected Loan Applications", description = "API to get all inactive loan applications for a user.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved",
                     content = @Content(mediaType = "application/json")),

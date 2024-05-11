@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplication;
-import org.hayo.finance.loanbook.models.SearchLoanApplicationsRequest;
+import org.hayo.finance.loanbook.dto.SearchLoanApplicationsRequest;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
 import org.hayo.finance.loanbook.models.exceptions.RecordNotFoundException;
 import org.hayo.finance.loanbook.service.AdminService;

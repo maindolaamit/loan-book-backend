@@ -72,7 +72,7 @@ public class AdminControllerIntegrationTest extends AbstractIntegrationTest {
 
 
     @Test
-    @DisplayName("Get a loan application by invalid id")
+    @DisplayName("Approve a loan application by invalid id")
     public void testApproveLoanApplicationByInvalidId() {
         // approve loan request
         given()

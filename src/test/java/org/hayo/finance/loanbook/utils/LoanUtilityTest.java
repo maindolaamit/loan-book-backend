@@ -82,6 +82,6 @@ class LoanUtilityTest {
     @DisplayName("Test getStringDate")
     void getStringDate() {
         val date = LocalDateTime.of(2021, 10, 10, 10, 10);
-        assertEquals("10/10/2021", LoanUtility.getStringDate(date));
+        assertEquals("10-Oct-2021", LoanUtility.getStringDate(date));
     }
 }
