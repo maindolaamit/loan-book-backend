@@ -40,9 +40,9 @@ class CustomerControllerTest extends AbstractIntegrationTest {
 
     @BeforeEach
     void setup() {
-        RestAssured.baseURI = "http://localhost/api";
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.basePath = "/api/v1";
         RestAssured.port = port;
-        RestAssured.basePath = "/v1/customer/";
     }
     @Test
     @DisplayName("Create a new loan application - with empty body")
@@ -56,7 +56,7 @@ class CustomerControllerTest extends AbstractIntegrationTest {
         val errorSchema = given()
                 .when()
 //                .body(request)
-                .post("/{customer-id}/loan/application", "1")
+                .post("/customer/{customer-id}/loan/application", "1")
                 .then()
                 .statusCode(500)
                 .extract()
@@ -77,7 +77,7 @@ class CustomerControllerTest extends AbstractIntegrationTest {
         val application = given()
                 .when()
                 .body(request)
-                .post("/{customer-id}/loan/application", "1")
+                .post("/customer/{customer-id}/loan/application", "1")
                 .then()
                 .statusCode(201)
                 .extract()
@@ -92,7 +92,7 @@ class CustomerControllerTest extends AbstractIntegrationTest {
     void testGetAllLoanApplications() {
         val loanApplications = given()
                 .when()
-                .get("/{customer-id}/loan/application/all", "1")
+                .get("/customer/{customer-id}/loan/application/all", "1")
                 .then()
                 .statusCode(200)
                 .extract()
@@ -102,17 +102,17 @@ class CustomerControllerTest extends AbstractIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get all Active/Approved loan applications")
+    @DisplayName("Get all Pending loan applications")
     void testGetAllPendingLoanApplications() {
         val loanApplications = given()
                 .when()
-                .get("/{customer-id}/loan/application/active", "1")
+                .get("/customer/{customer-id}/loan/application/pending", "1")
                 .then()
                 .statusCode(200)
                 .extract()
                 .as(LoanApplication[].class);
 
-        assertEquals(0, loanApplications.length);
+        assertEquals(2, loanApplications.length);
     }
 
     @Test
@@ -120,7 +120,7 @@ class CustomerControllerTest extends AbstractIntegrationTest {
     void testGetAllInactiveLoanApplications() {
         val loanApplications = given()
                 .when()
-                .get("/{customer-id}/loan/application/inactive", "1")
+                .get("/customer/{customer-id}/loan/application/inactive", "1")
                 .then()
                 .statusCode(200)
                 .extract()

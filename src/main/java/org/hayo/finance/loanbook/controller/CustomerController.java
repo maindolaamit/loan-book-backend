@@ -62,7 +62,7 @@ public class CustomerController {
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
 
-    @GetMapping("/loan/application/active")
+    @GetMapping("/loan/application/pending")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all Active/Pending/Approved Loan Applications", description = "API to get all active loan applications for a user.")
     @ApiResponses(value = {
