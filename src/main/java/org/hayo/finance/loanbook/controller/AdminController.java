@@ -24,13 +24,13 @@ import java.util.List;
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/admin/{admin-id}/")
+@RequestMapping("/v1/admin/{admin-id}/")
 @Tag(name = "Admin Controller", description = "Admin APIs")
 public class AdminController {
 
     private final AdminService service;
 
-    @GetMapping("/loan/application/")
+    @GetMapping("/loan/application/all")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all Loan Applications", description = "API to get all loan applications for a user.")
     @ApiResponses(value = {
@@ -48,7 +48,7 @@ public class AdminController {
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
 
-    @GetMapping("/loan/application/pending")
+    @GetMapping("/loan/application/all-pending")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get all Active Loan Applications", description = "API to get all active loan applications for a user.")
     @ApiResponses(value = {

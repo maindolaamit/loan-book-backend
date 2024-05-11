@@ -139,7 +139,7 @@ public class LoanServiceImpl implements LoanService {
                 .orElseThrow(() -> new RecordNotFoundException("Loan Application not found for id: " + applicationId));
 
         if (entity.getStatus() != ApprovalStatus.PENDING) {
-            throw new InvalidLoanStatusException("Loan application not eligible for Rejection.");
+            throw new InvalidLoanStatusException("Loan application already Rejected.");
         }
 
         entity.setStatus(ApprovalStatus.REJECTED);
@@ -158,7 +158,7 @@ public class LoanServiceImpl implements LoanService {
                 .orElseThrow(() -> new RecordNotFoundException("Loan Application not found for id: " + applicationId));
 
         if (entity.getStatus() != ApprovalStatus.PENDING) {
-            throw new InvalidLoanStatusException("Loan application not eligible for Rejection.");
+            throw new InvalidLoanStatusException("Loan application already approved.");
         }
 
         entity.setStatus(ApprovalStatus.APPROVED);

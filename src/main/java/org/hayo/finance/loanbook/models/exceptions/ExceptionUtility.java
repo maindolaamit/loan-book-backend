@@ -15,6 +15,7 @@ public class ExceptionUtility {
                         .detail(e.getMessage()).build()
         );
         return ApiErrorSchema.builder()
+                .code(String.valueOf(e.getStatus().value()))
                 .type(e.getStatus().toString())
                 .detail(e.getReason())
                 .causes(causes).build();

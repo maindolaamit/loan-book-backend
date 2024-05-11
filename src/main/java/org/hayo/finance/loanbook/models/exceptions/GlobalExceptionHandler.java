@@ -30,9 +30,13 @@ public class GlobalExceptionHandler {
                 .location("BODY")
                 .build();
 
-        ApiErrorSchema schema = new ApiErrorSchema(HttpStatus.BAD_REQUEST.toString(),
-                e.getMessage(),
-                Collections.singletonList(causes));
+        ApiErrorSchema schema = ApiErrorSchema.builder()
+                .code(String.valueOf(HttpStatus.BAD_REQUEST.value()))
+                .type(HttpStatus.BAD_REQUEST.name())
+                .detail(e.getMessage())
+                .causes(Collections.singletonList(causes))
+                .build();
+
         log.error("An error occurred {}", e.getMessage());
 
         log.error(e.getMessage());
@@ -51,12 +55,14 @@ public class GlobalExceptionHandler {
         ));
 
         ApiErrorSchema schema = ApiErrorSchema.builder()
+                .code(String.valueOf(HttpStatus.BAD_REQUEST.value()))
                 .type(HttpStatus.BAD_REQUEST.toString())
                 .detail("Validation error")
                 .causes(errors).build();
 
         return new ResponseEntity<>(schema, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> notValid(MethodArgumentNotValidException ex) {
         List<ApiErrorCauses> errors = new ArrayList<>();
@@ -85,7 +91,8 @@ public class GlobalExceptionHandler {
         ex.getAllErrors().forEach(err -> errors.add(
                 ApiErrorCauses.builder().detail(err.getDefaultMessage())
                         .location("body")
-                        .name("").build()
+                        .name(null)
+                        .build()
         ));
 
         ApiErrorSchema schema = ApiErrorSchema.builder()
@@ -95,6 +102,7 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(schema, HttpStatus.BAD_REQUEST);
     }
+
     @ExceptionHandler(AbstractWebExceptions.class)
     public ResponseEntity<ApiErrorSchema> handleException(AbstractWebExceptions e) {
         ApiErrorSchema schema = getApiErrorSchema(e);
@@ -107,14 +115,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiErrorSchema> handleException(Exception e) {
         String type = "INTERNAL_ERROR";
         String message = "An internal server error occurred, please try again later";
-        ApiErrorCauses causes = ApiErrorCauses.builder().name(type)
+
+        ApiErrorSchema schema = ApiErrorSchema.builder()
+                .code(String.valueOf(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+                .type(type)
                 .detail(message)
-                .location("BODY")
+                .causes(null)
                 .build();
 
-        ApiErrorSchema schema = new ApiErrorSchema(HttpStatus.INTERNAL_SERVER_ERROR.toString(),
-                "An error occurred",
-                Collections.singletonList(causes));
         log.error("An error occurred {}", e.getMessage());
         return new ResponseEntity<>(schema, HttpStatus.INTERNAL_SERVER_ERROR);
 

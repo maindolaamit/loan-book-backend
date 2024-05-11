@@ -3,6 +3,7 @@ package org.hayo.finance.loanbook.service;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplicationRequest;
+import org.hayo.finance.loanbook.it.AbstractIntegrationTest;
 import org.hayo.finance.loanbook.models.enums.ApprovalStatus;
 import org.hayo.finance.loanbook.models.enums.PaymentStatus;
 import org.hayo.finance.loanbook.models.exceptions.InvalidLoanStatusException;
@@ -11,12 +12,8 @@ import org.hayo.finance.loanbook.models.exceptions.RecordNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,15 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
         "spring.datasource.username=test",
         "spring.datasource.password=test"
 })
-@SpringBootTest
-@Testcontainers
-public class IntegrationServiceTest {
-
-    @Container
-    public static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:latest")
-            .withDatabaseName("test")
-            .withUsername("test")
-            .withPassword("test");
+public class IntegrationServiceTest extends AbstractIntegrationTest {
 
     @Autowired
     LoanService loanService;
@@ -50,10 +39,9 @@ public class IntegrationServiceTest {
     @Test
     @DisplayName("Test connection")
     void testConnection() {
-        assertThat(postgres.isCreated());
-        assertThat(postgres.isRunning());
+        assertThat(postgreSQLContainer.isCreated());
+        assertThat(postgreSQLContainer.isRunning());
     }
-
     @Test
     @DisplayName("Create a new loan application")
     public void testCreateNewLoanApplication() {
