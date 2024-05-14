@@ -9,6 +9,7 @@ import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.mapper.LoanApplicationMapper;
 import org.hayo.finance.loanbook.repository.LoanApplicationRepository;
+import org.hayo.finance.loanbook.service.impl.UserService;
 import org.mapstruct.factory.Mappers;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 @Component
 @AllArgsConstructor
@@ -24,8 +26,29 @@ import java.util.List;
 @Profile({"local", "test"})
 public class LoanApplicationsLoader implements CommandLineRunner {
     private final LoanApplicationRepository repository;
+    private final UserService userService;
+
+    private void setRoles() {
+        userService.saveRoleIfNotExists("ROLE_ADMIN");
+        userService.saveRoleIfNotExists("ROLE_USER");
+        userService.saveRoleIfNotExists("ROLE_CUSTOMER");
+    }
+
+    private void setUsers() {
+        userService.saveUserIfNotExists("admin", "admin@loanbook.com",
+                "admin", Set.of("ROLE_ADMIN"));
+        userService.saveUserIfNotExists("amit", "amit@gmail.com",
+                "amit", Set.of("ROLE_CUSTOMER"));
+        userService.saveUserIfNotExists("user", "user@gmail.com",
+                "user", Set.of("ROLE_USER"));
+    }
 
     public void run(String... args) throws Exception {
+//        log.info("Creating roles");
+//        setRoles();
+        log.info("Creating users");
+        setUsers();
+
         log.info("Loading Application data...");
         if (repository.count() > 0) {
             log.info("Loan Application data already loaded");

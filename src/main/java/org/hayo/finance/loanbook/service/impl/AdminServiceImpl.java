@@ -21,6 +21,7 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<LoanApplication> getAllPendingLoanApplications(String userId) {
+
         log.info("Getting all pending loan applications for admin: {}", userId);
         SearchLoanApplicationsRequest searchRequest = SearchLoanApplicationsRequest.builder()
                 .status(ApprovalStatus.PENDING)

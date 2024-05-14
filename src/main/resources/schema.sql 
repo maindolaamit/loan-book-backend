@@ -1,3 +1,32 @@
+Create table if not exists application_roles
+(
+    id          bigserial primary key,
+    role_name   varchar(255) not null,
+    description varchar(255),
+    created_by  varchar(255) not null,
+    created_at  timestamp(6) not null
+);
+
+create table if not exists application_users
+(
+    id          bigserial primary key,
+    first_name  varchar(255) not null,
+    last_name   varchar(255) not null,
+    email       varchar(255) not null,
+    password    varchar(255) not null,
+    role_id     bigint
+        constraint fkl1m27dx8686uvielmy0ev071i
+            references application_roles,
+    status      varchar(255) not null
+        constraint application_users_status_check
+            check ((status)::text = ANY
+                   ((ARRAY ['ACTIVE'::character varying, 'INACTIVE'::character varying])::text[])),
+    updated_by  varchar(255),
+    updated_at  timestamp(6),
+    created_by  varchar(255) not null,
+    created_at  timestamp(6) not null
+);
+
 create table if not exists cust_loan_applications
 (
     id             bigserial primary key,
@@ -36,3 +65,5 @@ create table if not exists cust_loan_payment_schedules
     created_by     varchar(255)     not null,
     created_at     timestamp(6)     not null
 );
+
+
