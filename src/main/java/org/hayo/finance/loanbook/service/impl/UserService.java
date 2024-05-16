@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
-import org.hayo.finance.loanbook.dto.request.UserLoginRequest;
 import org.hayo.finance.loanbook.dto.request.UserRegistrationRequest;
 import org.hayo.finance.loanbook.models.entity.ApplicationUser;
 import org.hayo.finance.loanbook.models.entity.ApplicationUserRole;
@@ -13,9 +12,6 @@ import org.hayo.finance.loanbook.repository.ApplicationUserRepository;
 import org.hayo.finance.loanbook.utils.RegistrationUtility;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,8 +30,6 @@ public class UserService implements UserDetailsService {
     private final ApplicationUserRepository userRepository;
     private final ApplicationRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
-    private final AuthenticationManager authenticationManager;
     private final JavaMailSender mailSender;
 
     public void requestPasswordReset(String email) {
@@ -71,15 +65,6 @@ public class UserService implements UserDetailsService {
         user.setVerificationCode(null);
         user.setVerificationCodeExpiry(null);
         userRepository.save(user);
-    }
-
-    public String regenerateToken(String email) {
-        ApplicationUser userDetails = (ApplicationUser) loadUserByUsername(email);
-        String token = jwtService.generateToken(userDetails.getEmail());
-        userDetails.setToken(token);
-        userRepository.save(userDetails);
-
-        return token;
     }
 
     @Override
@@ -174,10 +159,12 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public String login(@NotNull UserLoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
-        );
-        return jwtService.generateToken(request.email());
+    public String saveToken(String email, String token) {
+        val user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found")
+                );
+        user.setToken(token);
+        userRepository.save(user);
+        return token;
     }
 }

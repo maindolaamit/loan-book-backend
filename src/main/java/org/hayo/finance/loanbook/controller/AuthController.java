@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.request.UserLoginRequest;
 import org.hayo.finance.loanbook.dto.request.UserRegistrationRequest;
+import org.hayo.finance.loanbook.service.impl.JwtService;
 import org.hayo.finance.loanbook.service.impl.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("v1/auth")
 public class AuthController {
 
-    private final UserService service;
+    private final UserService userService;
+    private final JwtService jwtService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -37,7 +39,7 @@ public class AuthController {
     public ResponseEntity<String> registerCustomer(@Valid
                                                    @NotNull @RequestBody UserRegistrationRequest request) {
         log.info("Received registration request for user: {}", request.firstName());
-        val user = service.createCustomer(request);
+        val user = userService.createCustomer(request);
         if (user == null) {
             return new ResponseEntity<>("Error while creating the user!", HttpStatus.BAD_REQUEST);
         } else {
@@ -56,7 +58,7 @@ public class AuthController {
     })
     public ResponseEntity<String> verifyRegistration(@PathVariable String token) {
         log.info("Received registration verification request for token: {}", token);
-        val verified = service.verifyRegistration(token);
+        val verified = userService.verifyRegistration(token);
         if (!verified) {
             return new ResponseEntity<>("Error while verifying the user!", HttpStatus.BAD_REQUEST);
         } else {
@@ -74,7 +76,7 @@ public class AuthController {
     })
     public ResponseEntity<String> login(@Valid @NotNull @RequestBody UserLoginRequest request) {
         log.info("Received login request for user: {}", request.email());
-        val token = service.login(request);
+        val token = jwtService.login(request, userService);
         return new ResponseEntity<>(token, HttpStatus.OK);
     }
 }

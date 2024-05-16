@@ -3,11 +3,14 @@ package org.hayo.finance.loanbook.service.impl;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.hayo.finance.loanbook.dto.request.UserLoginRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -15,14 +18,19 @@ import java.util.Date;
 
 @Slf4j
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
 public class JwtService {
 
+    private final AuthenticationManager authenticationManager;
+    private final UserService userService;
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     @Value("${jwt.secret}")
     private String SECRET_KEY;
+
+    JwtService(AuthenticationManager authenticationManager, UserService userService) {
+        this.authenticationManager = authenticationManager;
+        this.userService = userService;
+    }
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token).getSubject();
@@ -53,5 +61,16 @@ public class JwtService {
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
                 .compact();
+    }
+
+    public String login(@NotNull UserLoginRequest request, UserService userService) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+        return userService.saveToken(request.email(), generateToken(request.email()));
+    }
+
+    public String regenerateToken(String email) {
+        return userService.saveToken(email, generateToken(email));
     }
 }
