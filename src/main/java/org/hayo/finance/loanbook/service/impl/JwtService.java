@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -63,10 +64,17 @@ public class JwtService {
                 .compact();
     }
 
-    public String login(@NotNull UserLoginRequest request, UserService userService) {
+    public void authenticate(String email, String password) {
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+                new UsernamePasswordAuthenticationToken(email, password)
         );
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+    }
+
+    public String login(@NotNull UserLoginRequest request, UserService userService) {
+        log.info("Logging in user: {}", request.email());
+        authenticate(request.email(), request.password());
         return userService.saveToken(request.email(), generateToken(request.email()));
     }
 

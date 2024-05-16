@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.request.UserLoginRequest;
 import org.hayo.finance.loanbook.dto.request.UserRegistrationRequest;
+import org.hayo.finance.loanbook.dto.response.UserLoginResponse;
 import org.hayo.finance.loanbook.service.impl.JwtService;
 import org.hayo.finance.loanbook.service.impl.UserService;
 import org.springframework.http.HttpStatus;
@@ -74,9 +75,9 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "Bad Request",
                     content = @Content(mediaType = "application/json"))
     })
-    public ResponseEntity<String> login(@Valid @NotNull @RequestBody UserLoginRequest request) {
+    public ResponseEntity<UserLoginResponse> login(@Valid @NotNull @RequestBody UserLoginRequest request) {
         log.info("Received login request for user: {}", request.email());
         val token = jwtService.login(request, userService);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        return new ResponseEntity<>(new UserLoginResponse(token), HttpStatus.OK);
     }
 }

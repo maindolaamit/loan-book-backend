@@ -116,7 +116,7 @@ public class UserService implements UserDetailsService {
             String token = RegistrationUtility.generateVerificationCode();
             LocalDateTime expiry = LocalDateTime.now().plusDays(1);
 
-            ApplicationUser user = userRepository.save(ApplicationUser.builder()
+            userRepository.save(ApplicationUser.builder()
                     .firstName(request.firstName())
                     .lastName(request.lastName())
                     .username(username.toString())
@@ -160,6 +160,7 @@ public class UserService implements UserDetailsService {
     }
 
     public String saveToken(String email, String token) {
+        log.info("Saving token for user: {}", email);
         val user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found")
                 );
