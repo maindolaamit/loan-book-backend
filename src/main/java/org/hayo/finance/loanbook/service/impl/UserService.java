@@ -10,6 +10,12 @@ import org.hayo.finance.loanbook.models.entity.ApplicationUser;
 import org.hayo.finance.loanbook.models.entity.ApplicationUserRole;
 import org.hayo.finance.loanbook.repository.ApplicationRoleRepository;
 import org.hayo.finance.loanbook.repository.ApplicationUserRepository;
+import org.hayo.finance.loanbook.utils.RegistrationUtility;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,13 +35,59 @@ public class UserService implements UserDetailsService {
     private final ApplicationRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final AuthenticationManager authenticationManager;
+    private final JavaMailSender mailSender;
+
+    public void requestPasswordReset(String email) {
+        ApplicationUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+        String token = RegistrationUtility.generateVerificationCode();
+        user.setVerificationCode(token);
+        user.setVerificationCodeExpiry(LocalDateTime.now().plusDays(1));
+        userRepository.save(user);
+
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(user.getEmail());
+        mailMessage.setSubject("Password Reset Request");
+        mailMessage.setText("To reset your password, click the link below:\n" +
+                "http://localhost:8080/reset-password?token=" + token);
+
+        mailSender.send(mailMessage);
+    }
+
+    public void resetPassword(String email, String token, String newPassword) {
+        ApplicationUser user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user email"));
+
+        // check the user token and expiry
+        if (!token.equals(user.getVerificationCode()))
+            throw new IllegalArgumentException("Invalid token or token expired");
+
+        if (user.getVerificationCodeExpiry() == null || LocalDateTime.now().isAfter(user.getVerificationCodeExpiry()))
+            throw new IllegalArgumentException("Token expired");
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpiry(null);
+        userRepository.save(user);
+    }
+
+    public String regenerateToken(String email) {
+        ApplicationUser userDetails = (ApplicationUser) loadUserByUsername(email);
+        String token = jwtService.generateToken(userDetails.getEmail());
+        userDetails.setToken(token);
+        userRepository.save(userDetails);
+
+        return token;
+    }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        log.info("Checking if user exists: {}", username);
-        val user = userRepository.findByUsername(username)
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        log.info("Checking if user exists: {}", email);
+        val user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-        log.info("Loading user by username: {}", username);
+        log.info("Loading user by email: {}", email);
         return user;
     }
 
@@ -45,14 +97,21 @@ public class UserService implements UserDetailsService {
                 .getUserId();
     }
 
-    public boolean createCustomer(UserRegistrationRequest request) {
+    public String createCustomer(UserRegistrationRequest request) {
         // check if user is already registered
         userRepository.findByEmail(request.email()).ifPresent(user -> {
             throw new IllegalArgumentException("User already exists");
         });
 
-        saveUserIfNotExists(request, Set.of("ROLE_CUSTOMER"));
-        return true;
+        String url = saveUserIfNotExists(request, Set.of("ROLE_CUSTOMER"));
+        // send email
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(request.email());
+        mailMessage.setSubject("Password Reset Request");
+        mailMessage.setText("To reset your password, click the link below:\n" + url);
+        mailSender.send(mailMessage);
+
+        return url;
     }
 
     private String getTrimmedUsername(String username) {
@@ -68,22 +127,27 @@ public class UserService implements UserDetailsService {
             if (request.lastName() != null && !request.lastName().isBlank())
                 username.append(getTrimmedUsername(request.lastName()));
 
-            userRepository.save(ApplicationUser.builder()
+            // get a token
+            String token = RegistrationUtility.generateVerificationCode();
+            LocalDateTime expiry = LocalDateTime.now().plusDays(1);
+
+            ApplicationUser user = userRepository.save(ApplicationUser.builder()
                     .firstName(request.firstName())
                     .lastName(request.lastName())
                     .username(username.toString())
                     .email(request.email())
+                    .verificationCode(token).verificationCodeExpiry(expiry)
                     .password(passwordEncoder.encode(request.password()))
                     .createdAt(LocalDateTime.now()).createdBy("system")
                     .updatedAt(LocalDateTime.now()).updatedBy("system")
                     .roles(roles.stream().map(this::getRoleFor).collect(Collectors.toSet()))
                     .build());
             log.info("User created: {}", username);
-            return username.toString();
+            return RegistrationUtility.getVerificationUrl(request.email(), token);
         }
 
         log.info("User already exists: {}", request.email());
-        return byEmail.get().getUsername();
+        throw new IllegalArgumentException("User already exists");
     }
 
     private ApplicationUserRole getRoleFor(@NotNull String authority) {
@@ -111,16 +175,9 @@ public class UserService implements UserDetailsService {
     }
 
     public String login(@NotNull UserLoginRequest request) {
-        val byEmail = userRepository.findByEmail(request.email());
-        // check if user exists
-        if (byEmail.isPresent()) {
-            // check if password matches
-            if (passwordEncoder.matches(request.password(), byEmail.get().getPassword())) {
-                // generate token
-                return jwtService.generateToken(byEmail.get().getUsername());
-            }
-        }
-
-        throw new IllegalArgumentException("Invalid user credentials");
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.email(), request.password())
+        );
+        return jwtService.generateToken(request.email());
     }
 }

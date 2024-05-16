@@ -38,7 +38,7 @@ public class AuthController {
                                                    @NotNull @RequestBody UserRegistrationRequest request) {
         log.info("Received registration request for user: {}", request.firstName());
         val user = service.createCustomer(request);
-        if (!user) {
+        if (user == null) {
             return new ResponseEntity<>("Error while creating the user!", HttpStatus.BAD_REQUEST);
         } else {
             return new ResponseEntity<>("User registered successfully!", HttpStatus.CREATED);

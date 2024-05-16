@@ -38,6 +38,13 @@ public class ApplicationUser implements UserDetails {
     @Column(nullable = false)
     private String email;
 
+    @Column(name = "token")
+    private String token;
+    @Column(name = "verification_code")
+    private String verificationCode;
+    @Column(name = "verification_code_expiry")
+    private LocalDateTime verificationCodeExpiry;
+
     @Column(name = "created_by")
     private String createdBy = "admin";
     @Column(name = "updated_by")
