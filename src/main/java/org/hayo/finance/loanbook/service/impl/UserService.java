@@ -1,14 +1,15 @@
 package org.hayo.finance.loanbook.service.impl;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
+import org.hayo.finance.loanbook.dto.request.UserLoginRequest;
 import org.hayo.finance.loanbook.dto.request.UserRegistrationRequest;
 import org.hayo.finance.loanbook.models.entity.ApplicationUser;
 import org.hayo.finance.loanbook.models.entity.ApplicationUserRole;
 import org.hayo.finance.loanbook.repository.ApplicationRoleRepository;
 import org.hayo.finance.loanbook.repository.ApplicationUserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -27,6 +28,7 @@ public class UserService implements UserDetailsService {
     private final ApplicationUserRepository userRepository;
     private final ApplicationRoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -37,44 +39,63 @@ public class UserService implements UserDetailsService {
         return user;
     }
 
-    public boolean createUser(UserRegistrationRequest request) {
-        // check if user already exists
-        if (userRepository.findByUsername(request.username()).isPresent()) {
+    public long getUserId(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found"))
+                .getUserId();
+    }
+
+    public boolean createCustomer(UserRegistrationRequest request) {
+        // check if user is already registered
+        userRepository.findByEmail(request.email()).ifPresent(user -> {
             throw new IllegalArgumentException("User already exists");
-        }
-        // create user
-        log.info("Creating user: {}", request.username());
-        userRepository.save(ApplicationUser.builder()
-                .username(request.username())
-                .password(passwordEncoder.encode(request.password()))
-                .email(request.email())
-                .roles(Set.of(ApplicationUserRole.builder().authority("ROLE_CUSTOMER").build()))
-                .build());
+        });
+
+        saveUserIfNotExists(request, Set.of("ROLE_CUSTOMER"));
         return true;
     }
 
-    public boolean saveUserIfNotExists(String username, String email, String password,
-                                       Set<String> roles) {
-        if (userRepository.findByUsername(username).isEmpty()) {
+    private String getTrimmedUsername(String username) {
+        return username.trim().toLowerCase().replace(" ", "");
+    }
+
+    public String saveUserIfNotExists(UserRegistrationRequest request, Set<String> roles) {
+        // check if user already exists
+        val byEmail = userRepository.findByEmail(request.email());
+        if (byEmail.isEmpty()) {
+            log.info("Creating user: {}", request.email());
+            StringBuilder username = new StringBuilder(getTrimmedUsername(request.firstName()));
+            if (request.lastName() != null && !request.lastName().isBlank())
+                username.append(getTrimmedUsername(request.lastName()));
+
             userRepository.save(ApplicationUser.builder()
-                    .username(username)
-                    .email(email)
-                    .password(passwordEncoder.encode(password))
+                    .firstName(request.firstName())
+                    .lastName(request.lastName())
+                    .username(username.toString())
+                    .email(request.email())
+                    .password(passwordEncoder.encode(request.password()))
                     .createdAt(LocalDateTime.now()).createdBy("system")
                     .updatedAt(LocalDateTime.now()).updatedBy("system")
                     .roles(roles.stream().map(this::getRoleFor).collect(Collectors.toSet()))
                     .build());
-            return true;
+            log.info("User created: {}", username);
+            return username.toString();
         }
-        return false;
+
+        log.info("User already exists: {}", request.email());
+        return byEmail.get().getUsername();
     }
 
-    private ApplicationUserRole getRoleFor(String authority) {
-        LocalDateTime now = LocalDateTime.now();
-        return ApplicationUserRole.builder().authority(authority)
-                .createdBy("system").updatedBy("system")
-                .createdAt(now).updatedAt(now)
-                .build();
+    private ApplicationUserRole getRoleFor(@NotNull String authority) {
+        if (roleRepository.findByAuthority(authority).isEmpty()) {
+            LocalDateTime now = LocalDateTime.now();
+            return ApplicationUserRole.builder().authority(authority)
+                    .createdBy("system").updatedBy("system")
+                    .createdAt(now).updatedAt(now)
+                    .build();
+        } else {
+            return roleRepository.findByAuthority(authority).get();
+        }
     }
 
     public boolean saveRoleIfNotExists(String authority) {
@@ -85,13 +106,21 @@ public class UserService implements UserDetailsService {
         return false;
     }
 
-    public Long getLoggedInCustomerId() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public boolean verifyRegistration(String token) {
+        return true;
+    }
 
-        if (principal instanceof UserDetails) {
-            return ((ApplicationUser) principal).getUserId();
+    public String login(@NotNull UserLoginRequest request) {
+        val byEmail = userRepository.findByEmail(request.email());
+        // check if user exists
+        if (byEmail.isPresent()) {
+            // check if password matches
+            if (passwordEncoder.matches(request.password(), byEmail.get().getPassword())) {
+                // generate token
+                return jwtService.generateToken(byEmail.get().getUsername());
+            }
         }
 
-        throw new IllegalStateException("The current user is not authenticated.");
+        throw new IllegalArgumentException("Invalid user credentials");
     }
 }

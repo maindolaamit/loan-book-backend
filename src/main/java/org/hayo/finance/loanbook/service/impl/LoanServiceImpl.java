@@ -32,9 +32,11 @@ import static org.hayo.finance.loanbook.repository.LoanApplicationsSpecification
 public class LoanServiceImpl implements LoanService {
     LoanApplicationRepository repository;
     LoanApplicationMapper mapper;
+    UserService userService;
 
     @Override
-    public LoanApplication newLoanApplication(String userId, NewLoanApplicationRequest request) {
+    public LoanApplication newLoanApplication(String userName, NewLoanApplicationRequest request) {
+        String userId = String.valueOf(userService.getUserId(userName));
         val newRequest = NewLoanApplicationRequest.copyWithUserId(request, userId);
         // create loan schedules based on frequency, amount and terms
         log.info("Creating new loan application");

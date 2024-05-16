@@ -1,11 +1,12 @@
 package org.hayo.finance.loanbook.utils;
 
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 public class JwtTokenUtil implements Serializable {
 
@@ -14,9 +15,9 @@ public class JwtTokenUtil implements Serializable {
     public static final long JWT_TOKEN_VALIDITY = 5 * 60 * 60;
 
     @Value("${jwt.secret}")
-    private String secret;
+    private String SECRET_KEY;
 
-//    public String getUsernameFromToken(String token) {
+//        public String getUsernameFromToken(String token) {
 //        return getClaimFromToken(token, Claims::getSubject);
 //    }
 //
@@ -37,16 +38,16 @@ public class JwtTokenUtil implements Serializable {
 //        return claimsResolver.apply(claims);
 //    }
 //
-//    public String generateToken(String username) {
-//        return doGenerateToken(username);
-//    }
-//
-//    private String doGenerateToken(String username) {
-//        return jwts.builder()
-//                .setSubject(username)
-//                .setIssuedAt(LocalDateTime.now())
-//                .setExpiration(LocalDateTime.now().plusSeconds(JWT_TOKEN_VALIDITY))
-//                .signWith(SignatureAlgorithm.HS512, secret)
-//                .compact();
-//    }
+    public String generateToken(String username) {
+        return doGenerateToken(username);
+    }
+
+    private String doGenerateToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 1000))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
 }

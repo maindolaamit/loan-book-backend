@@ -6,27 +6,44 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
 import org.hayo.finance.loanbook.dto.LoanApplication;
 import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
+import org.hayo.finance.loanbook.models.entity.ApplicationUser;
 import org.hayo.finance.loanbook.service.CustomerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
+@CrossOrigin("*")
 @Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("v1/customer/{customer-id}/")
+@RequestMapping("v1/customer")
 @Tag(name = "Customer APIs", description = "LoanBook Customer APIs/Endpoints")
 public class CustomerController {
 
     private final CustomerService service;
+
+    private String getCustomerId(Principal principal) {
+        if(principal instanceof Authentication){
+            Object principalUser = ((Authentication) principal).getPrincipal();
+            if(principalUser instanceof UserDetails){
+                val principalUser1 = (ApplicationUser) principalUser;
+                principalUser1.getAuthorities();
+            }
+        }
+        return principal.getName();
+//        throw new RuntimeException("Invalid Principal, could not extract user id.");
+    }
 
     @PostMapping("/loan/application/")
     @ResponseStatus(HttpStatus.CREATED)
@@ -38,8 +55,10 @@ public class CustomerController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<LoanApplication> submitLoanApplication(@Valid
-                                                        @PathVariable("customer-id") @NotNull String customerId,
-                                                        @NotNull @RequestBody NewLoanApplicationRequest request) {
+                                                                 @NotNull @RequestBody NewLoanApplicationRequest request,
+                                                                 Principal principal) {
+
+        String customerId = getCustomerId(principal);
         log.info("Received loan request for user: {}", customerId);
         LoanApplication application = service.submitNewLoanApplication(customerId, request);
         return new ResponseEntity<>(application, HttpStatus.CREATED);
@@ -55,10 +74,11 @@ public class CustomerController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllLoanApplicationsForUser(@Valid
-                                                                               @PathVariable("customer-id")
-                                                                               @NotBlank @NotNull String customerId
+                                                                               Principal principal
     ) {
-        var allApplications = service.getAllLoanApplicationsForUser(customerId);
+        String customerName = getCustomerId(principal);
+        log.info("Received loan request for user: {}", principal.getName());
+        var allApplications = service.getAllLoanApplicationsForUser(customerName);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
 
@@ -72,9 +92,9 @@ public class CustomerController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllActiveLoanApplicationsForUser(@Valid
-                                                                                     @PathVariable("customer-id")
-                                                                                     @NotBlank @NotNull String customerId
+                                                                                     Principal principal
     ) {
+        String customerId = getCustomerId(principal);
         var allApplications = service.getAllActiveLoanApplicationsForUser(customerId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
@@ -89,9 +109,10 @@ public class CustomerController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<List<LoanApplication>> getAllInactiveLoanApplicationsForUser(@Valid
-                                                                                       @PathVariable("customer-id")
-                                                                                       @NotBlank @NotNull String customerId
+                                                                                       Principal principal
+
     ) {
+        String customerId = getCustomerId(principal);
         var allApplications = service.getInactiveLoanApplicationsForUser(customerId);
         return new ResponseEntity<>(allApplications, HttpStatus.OK);
     }
@@ -106,10 +127,11 @@ public class CustomerController {
                     content = @Content(mediaType = "application/json"))
     })
     public ResponseEntity<LoanApplication> repayLoanAmount(@Valid
-                                                           @PathVariable("customer-id") @NotNull String customerId,
                                                            @PathVariable("loan-id") @NotNull String loanId,
-                                                           @RequestParam("amount") @NotNull Double amount
+                                                           @RequestParam("amount") @NotNull Double amount,
+                                                           Principal principal
     ) {
+        String customerId = getCustomerId(principal);
         log.info("Received loan request for user: {}", customerId);
         LoanApplication loanRequestId = service.repayLoanAmount(customerId, loanId, amount);
         return new ResponseEntity<>(loanRequestId, HttpStatus.CREATED);

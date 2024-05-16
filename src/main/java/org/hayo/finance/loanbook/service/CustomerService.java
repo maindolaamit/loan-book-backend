@@ -8,13 +8,13 @@ import java.util.List;
 
 public interface CustomerService {
 
-    LoanApplication submitNewLoanApplication(String userId, NewLoanApplicationRequest request);
+    LoanApplication submitNewLoanApplication(String customerName, NewLoanApplicationRequest request);
 
-    List<LoanApplication> getInactiveLoanApplicationsForUser(String customerId);
+    List<LoanApplication> getInactiveLoanApplicationsForUser(String customerName);
 
-    List<LoanApplication> getAllActiveLoanApplicationsForUser(String customerId);
+    List<LoanApplication> getAllActiveLoanApplicationsForUser(String customerName);
 
-    LoanApplication repayLoanAmount(String customerId, String loanApplicationId, @NotNull Double amount);
+    LoanApplication repayLoanAmount(String customerName, String loanApplicationId, @NotNull Double amount);
 
-    List<LoanApplication> getAllLoanApplicationsForUser(String customerId);
+    List<LoanApplication> getAllLoanApplicationsForUser(String customerName);
 }

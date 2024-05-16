@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.hayo.finance.loanbook.dto.request.NewLoanApplicationRequest;
+import org.hayo.finance.loanbook.dto.request.UserRegistrationRequest;
 import org.hayo.finance.loanbook.models.entity.LoanApplicationEntity;
 import org.hayo.finance.loanbook.models.mapper.LoanApplicationMapper;
 import org.hayo.finance.loanbook.repository.LoanApplicationRepository;
@@ -35,12 +36,18 @@ public class LoanApplicationsLoader implements CommandLineRunner {
     }
 
     private void setUsers() {
-        userService.saveUserIfNotExists("admin", "admin@loanbook.com",
-                "admin", Set.of("ROLE_ADMIN"));
-        userService.saveUserIfNotExists("amit", "amit@gmail.com",
-                "amit", Set.of("ROLE_CUSTOMER"));
-        userService.saveUserIfNotExists("user", "user@gmail.com",
-                "user", Set.of("ROLE_USER"));
+        userService.saveUserIfNotExists(
+                UserRegistrationRequest.builder()
+                        .firstName("Admin").lastName(null).password("admin").email("admin@loanbook.com").build()
+                , Set.of("ROLE_ADMIN"));
+        userService.saveUserIfNotExists(
+                UserRegistrationRequest.builder()
+                        .firstName("Amit").lastName("Maindola").password("amit").email("amit@gmail.com").build()
+                , Set.of("ROLE_CUSTOMER"));
+        userService.saveUserIfNotExists(
+                UserRegistrationRequest.builder()
+                        .firstName("user").lastName(null).password("user").email("user@gmail.com").build()
+                , Set.of("ROLE_USER"));
     }
 
     public void run(String... args) throws Exception {

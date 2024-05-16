@@ -26,6 +26,12 @@ public class ApplicationUser implements UserDetails {
     @Column(unique = true)
     private String username;
 
+    @Column(unique = true)
+    private String firstName;
+
+    @Column(unique = true)
+    private String lastName;
+
     @Column(nullable = false)
     private String password;
 
@@ -51,7 +57,7 @@ public class ApplicationUser implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.roles;
     }
 
     @Override
